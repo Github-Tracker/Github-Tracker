@@ -5,10 +5,12 @@ import datetime
 import urlparse
 
 base_url = "https://api.github.com"
-
+user = []
+s = []
 with open('database.csv', 'rb') as f:
     reader = csv.reader(f)
-    user = list(reader)
+    for data in reader:
+        user.append(data)
 print user
 
 z = len(user)
@@ -16,7 +18,7 @@ date = datetime.datetime.now()
 name = date.strftime("%d-%m-%Y")
 
 print z
-s = []
+
 
 
 def api_call():
@@ -24,7 +26,7 @@ def api_call():
         writer = csv.DictWriter(outcsv, fieldnames=['Name', 'Repo', 'Contributor', 'Week', 'Number of Commits',
                                                     'Number of Lines Added', 'Number of Lines Deleted'], delimiter=',')
         writer.writeheader()
-        for i in range(0, z):
+        for i in range(1, z):
             request_url = (base_url + '/repos/%s/%s/stats/contributors?'
                                       'client_id=6ffcb5c447f054babff3&client_secret='
                                       '6b889df62e3474104a6b23d949c0c55f86a8e50a') % (user[i][0], user[i][1])
@@ -52,7 +54,11 @@ def api_call():
                                          'Number of Commits': str(commits), 'Number of Lines Added': str(add),
                                          'Number of Lines Deleted': str(delete)})
 
-            except :continue
+            except :
+                writer.writerow({'Name': user[i][0], 'Repo': user[i][1], 'Contributor': user[i][0], 'Week': 0,
+                                 'Number of Commits': 0, 'Number of Lines Added': 0,
+                                 'Number of Lines Deleted': 0})
+                continue
 
 
 
